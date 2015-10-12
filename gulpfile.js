@@ -20,7 +20,7 @@ function doWebpack(config) {
 }
 
 // content of scss compile task (task name is 'scss')
-function doSsss() {
+function doScss() {
   return gulp.src(src + 'scss/main.scss')
     .pipe($.sass().on('error', $.sass.logError))
     .pipe(gulp.dest(dist))
