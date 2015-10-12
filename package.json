@@ -20,6 +20,12 @@
     "underscore": "^1.8.3"
   },
   "devDependencies": {
-    "webpack": "^1.12.2"
+    "gulp": "^3.9.0",
+    "gulp-load-plugins": "^0.10.0",
+    "gulp-sass": "^2.0.4",
+    "gulp-size": "^2.0.0",
+    "gulp-uglify": "^1.4.1",
+    "gulp-util": "^3.0.6",
+    "webpack-stream": "^2.1.0"
   }
 }
