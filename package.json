@@ -1,0 +1,25 @@
+{
+  "name": "circuit-game",
+  "version": "1.0.0",
+  "description": "",
+  "main": "application.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/samgqroberts/CircuitGame.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/samgqroberts/CircuitGame/issues"
+  },
+  "homepage": "https://github.com/samgqroberts/CircuitGame#readme",
+  "dependencies": {
+    "underscore": "^1.8.3"
+  },
+  "devDependencies": {
+    "webpack": "^1.12.2"
+  }
+}
