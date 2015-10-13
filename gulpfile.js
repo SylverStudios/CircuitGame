@@ -9,7 +9,8 @@ var environment = $.util.env.type || 'development';
 
 // base directories
 var dist = 'build/';
-var src = 'src/'
+var webpage = 'webpage/';
+var circuitGame = 'circuit-game/';
 
 // content of webpack task (task name is 'scripts')
 function doWebpack(config) {
@@ -22,7 +23,7 @@ function doWebpack(config) {
 
 // content of scss compile task (task name is 'scss')
 function doScss() {
-  return gulp.src(src + 'scss/main.scss')
+  return gulp.src('webpage/scss/main.scss')
     .pipe($.sass().on('error', $.sass.logError))
     .pipe(gulp.dest(dist))
     .pipe($.size({title: 'css'}));
@@ -48,7 +49,7 @@ gulp.task('watch', function () {
   doWebpack(config);
 
   doScss();
-  gulp.watch(src + 'scss/**/*.scss', ['scss']); // define our own scss compile watch process
+  gulp.watch(webpage + 'scss/**/*.scss', ['scss']); // define our own scss compile watch process
 });
 
 /**
@@ -56,6 +57,6 @@ gulp.task('watch', function () {
  */
 
 gulp.task('test', function() {
-  return gulp.src('spec/**/*.js')
+  return gulp.src(circuitGame + 'spec/**/*.js')
     .pipe(jasmine());
 })

@@ -3,7 +3,7 @@ module.exports = function(environmentType) {
   var isDevEnvironment = !environmentType || environmentType === 'development';
 
   return {
-    entry: './src/js/application.js',
+    entry: './webpage/js/main.js',
     output: {
       filename: 'main.js'
     },

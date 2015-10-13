@@ -1,5 +1,3 @@
-console.log('GameController got webpacked!');
-
 GameController = {};
 
 GameController.createBoard = function(numInputs, randomSeed) {};
