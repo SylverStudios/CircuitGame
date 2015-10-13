@@ -2,7 +2,6 @@ var gulp = require('gulp');
 var webpack = require('webpack-stream');
 var $ = require('gulp-load-plugins')();
 var webpackConfig = require('./webpack.config.js');
-var jasmine = require('gulp-jasmine');
 
 // pull the build environment from the '--type <foo>' arg
 var environment = $.util.env.type || 'development';
@@ -51,12 +50,3 @@ gulp.task('watch', function () {
   doScss();
   gulp.watch(webpage + 'scss/**/*.scss', ['scss']); // define our own scss compile watch process
 });
-
-/**
- * Testing
- */
-
-gulp.task('test', function() {
-  return gulp.src(circuitGame + 'spec/**/*.js')
-    .pipe(jasmine());
-})
