@@ -6,3 +6,5 @@ console.log('Application got webpacked!');
 if (_) {
   console.log('underscore is available!');
 }
+
+module.exports = {};
