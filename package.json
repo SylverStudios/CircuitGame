@@ -4,7 +4,7 @@
   "description": "",
   "main": "application.js",
   "scripts": {
-    "test": "node ./node_modules/jest-cli/bin/jest"
+    "test": "node ./node_modules/jest-cli/bin/jest --verbose"
   },
   "repository": {
     "type": "git",
