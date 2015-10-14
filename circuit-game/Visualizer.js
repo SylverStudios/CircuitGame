@@ -18,7 +18,7 @@ var Visualizer = function(containerId, width, height) {
 
   this.update = function(board) {
     context.font = '20px Georgia';
-    context.fillText('number of inputs: ' + board.numInputs, 10, 50);
+    context.fillText('number of inputs: ' + board.getInputNodes().length, 10, 50);
   }
 }
 

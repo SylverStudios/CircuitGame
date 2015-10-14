@@ -35,7 +35,7 @@ describe('Visualizer rendering', function() {
     var fakeContext = {fillText: jest.genMockFunction()};
     fakeCanvass.getContext = jest.genMockFunction().mockReturnValueOnce(fakeContext);
     visualizerInstance.init();
-    visualizerInstance.update({numInputs: 4});
+    visualizerInstance.update({getInputNodes: function() {return [0, 1, 2, 3]}});
     expect(fakeContext.fillText.mock.calls[0][0]).toBe('number of inputs: 4');
   });
 })
