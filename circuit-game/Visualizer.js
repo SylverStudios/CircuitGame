@@ -1,6 +1,5 @@
 var _ = require('underscore');
 var pen = require('./CanvasUtility');
-var controller = require('./Controller');
 
 var Visualizer = function(containerId, width, height) {
   var canvas, context;
@@ -13,17 +12,16 @@ var Visualizer = function(containerId, width, height) {
 
     // create canvas
     canvas = document.createElement('canvas');
-    canvas.height = height;
-    canvas.width = width;
     canvas.style.background = 'white';
     container.appendChild(canvas);
     context = canvas.getContext('2d');
   };
 
-  this.update = function(board) {
+  this.buildGameBoard = function(board) {
+    console.log("Does nothing right now.");
+  };
 
-    var left = canvas.offsetLeft;
-    var right = canvas.offsetTop;
+  this.update = function(board) {
 
     var testFunction = function() {
 
@@ -31,63 +29,88 @@ var Visualizer = function(containerId, width, height) {
       {id: 0, ins: [], outs: [4]},
       {id: 1, ins: [], outs: [4]},
       {id: 2, ins: [], outs: [5]},
+      {id: 7, ins: [5], outs: []},
       {id: 3, ins: [], outs: [6]},
       {id: 4, ins: [0, 1], outs: [5]},
       {id: 5, ins: [2, 4], outs: [6, 7]},
       {id: 6, ins: [3, 5], outs: [8]},
-      {id: 7, ins: [5], outs: []},
       {id: 8, ins: [6], outs: []}
     ];
 
-      turnNodeArrayIntoLayerArray(nodes);
+      var layerArray = turnNodeArrayIntoLayerArray(board);
 
+      determineNodePositions(layerArray);
+      printLayerArrayNodeLocations(layerArray);
+
+      drawLayerArray(layerArray, nodes);
     }
 
 
     //___________________UTILITY FXNS____________________________
 
     // LOCATION SERVICE
-
-    // 1)
-    // location of each node is based on
-    // X = layerNumber / layerTotal
-    // Y = avgY(all inputs)
-    // need to build an [] of []s 
-    var turnNodeArrayIntoLayerArray = function(arrayOfNodes) {
-      // when controller is working
-      // var inputs = controller.getInputNodes();
-      // var outputs = controller.getOutputNodes();
+    var turnNodeArrayIntoLayerArray = function(board) {
       layerArray = [];
+      var loopKiller = 0;
 
-      var solved = _.filter(arrayOfNodes, function(node) {
-        return node.ins.length === 0;
-      });
-
-      var unsolved = _.filter(arrayOfNodes, function(node) {
-        return node.ins.length != 0;
-      });
+      var solved = board.getInputNodes();
+      var unsolved = board.getGates().concat(board.getOutputNodes());
 
       layerArray.push(solved);
 
       while (unsolved.length) {
+        loopKiller++;
         var currentLayer = getNextLayer(solved, unsolved);
         unsolved = removeNodesFromArrayById(unsolved, currentLayer);
         solved = solved.concat(currentLayer);
 
         layerArray.push(currentLayer);
+        console.log("num iterations: "+loopKiller);
+
+        if (loopKiller > 50) {
+          console.log("unsolvedArray.length = "+unsolved.length);
+          break;
+          return;
+          unsolved.length = false;
+        }
+
       }
 
       printLayerArray(layerArray);
+      return layerArray;
     }
 
-    var removeNodesFromArrayById = function(arrayToModify, elementsToRemove) {
-      elementsToRemove.forEach(function(element) {
-        var index = indexOfObjectById(arrayToModify, element);
-        console.log("Index of element: "+element.id+" is "+index);
-        arrayToModify.splice(index, 1);
-      });
+    var determineNodePositions = function(layerArray) {
+      var xIntervals = canvas.width/(layerArray.length+1);
+      
+      for (var i=0; i<layerArray.length; i++) {
+        var currentArray = layerArray[i];
+        
+        for( var j=0; j<currentArray.length; j++) {
+          currentArray[j].x = xIntervals*(i+1);
+          currentArray[j].y = canvas.height/(currentArray.length+1)*(j+1);
+        }
 
-      return arrayToModify;
+      }
+    }
+
+    var drawLayerArray = function(layerArray) {
+      layerArray.forEach(function(nodeArray) {
+        var currentArray = nodeArray;
+
+        currentArray.forEach(function(node) {
+          pen.placeNodeOnCanvas(context, node);
+          var currentNode = node;
+
+          currentNode.outs.forEach(function(nodeID) {
+            // Problem area
+            var outNode = findNodeInLayerArray(layerArray, nodeID);
+            if (outNode) {
+              pen.connectNodesOnCanvas(context, currentNode, outNode);
+            }
+          });
+        });
+      });
     }
 
     var getNextLayer = function(solvedNodes, unsolvedNodes) {
@@ -96,6 +119,16 @@ var Visualizer = function(containerId, width, height) {
         return inputNodesInArray(solvedNodes, element);
       });
 
+    }
+
+    //________________________________________________________________________OBJECT UTILITIES
+    var removeNodesFromArrayById = function(arrayToModify, elementsToRemove) {
+      elementsToRemove.forEach(function(element) {
+        var index = indexOfObjectById(arrayToModify, element);
+        arrayToModify.splice(index, 1);
+      });
+
+      return arrayToModify;
     }
 
     var inputNodesInArray = function(arrayOfNodes, node) {
@@ -111,30 +144,52 @@ var Visualizer = function(containerId, width, height) {
       if (!_.find(arrayOfNodes, function(node) {
         return node.id == id;
       })) { 
-        return false 
+        return false;
       };
       
       return true;
     }
 
-    var indexOfObjectById = function(array, node) {
+    var indexOfObjectById = function(array, nodeID) {
       for (var i=0; i<array.length; i++) {
-        if(array[i].id == node.id) {
+        if(array[i].id == nodeID) {
           return i;
         }
       }
     }
 
-    var determineInputLocations = function(canvas, numberOfInputs) {
-      var yAxisInterval = canvas.height/numberOfInputs;
-      var xAxisInterval = canvas.width/numberOfLayers;
+    var findObjectById = function(array, nodeID) {
+      for (var i=0; i<array.length; i++) {
+        if(array[i].id == nodeID) {
+          return array[i];
+        }
+      }
     }
 
-    // Printing methods
+    var findNodeInLayerArray = function(layerArray, nodeID) {
+      console.log("findNodeInLayerArray with nodeID: "+nodeID);
+      for(var i=0; i<layerArray.length;i++) {
+        var foundNode = findObjectById(layerArray[i], nodeID);
+        if (foundNode) {
+          console.log("Search for node with ID: "+foundNode.id+" and found one with X: "+foundNode.x);
+          return foundNode;
+        }
+      }
+    }
+
+    //___________________________________________________________________PRINT
     var printLayer = function(arrayOfNodes) {
       var text = "Array contains [";
       arrayOfNodes.forEach(function(element) {
         text = text+" Element ID: "+element.id;
+      })
+      console.log(text+"]");
+    }
+
+    var printLayerNodeLocations = function(arrayOfNodes) {
+      var text = "Array contains [";
+      arrayOfNodes.forEach(function(element) {
+        text = text+" Element ID: "+element.id+" X: "+element.x+" Y: "+element.y;
       })
       console.log(text+"]");
     }
@@ -147,7 +202,14 @@ var Visualizer = function(containerId, width, height) {
       }
     }
 
-    pen.canvasTest(context);
+    var printLayerArrayNodeLocations = function(layerArray) {
+      console.log("LayerArray contains : ");
+      for(var i=0; i<layerArray.length;i++) {
+        console.log("Layer #"+i);
+        printLayerNodeLocations(layerArray[i]);
+      }
+    }
+
     testFunction();
   }
 }

@@ -2,7 +2,7 @@
 // context.arc(x,y,r,sAngle,eAngle,counterclockwise);
 var placeNode = function(context, node) {
   context.beginPath();
-  context.arc(node.x, node.y, 20, 0, 2*Math.PI);
+  context.arc(node.x, node.y, 10, 0, 2*Math.PI);
   // context.fillStyle='#4F2F4F'
   context.fillStyle = 'green';
   context.fill();
@@ -68,6 +68,9 @@ module.exports = {
   },
 
   connectNodesOnCanvas : function(context, node1, node2) {
+    console.log("Connecting nodes: \n");
+    console.log("outNode ID: "+node1.id+" X: "+node1.x+" Y: "+node1.y);
+            console.log("currentNode ID: "+node2.id+" X: "+node2.x+" Y: "+node2.y);
     connectNodes(context, node1, node2);
   },
 
