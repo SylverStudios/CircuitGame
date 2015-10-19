@@ -33,6 +33,11 @@
     "rootDir": "circuit-game",
     "modulePathIgnorePatterns": [
       "npm"
+    ],
+    "unmockedModulePathPatterns": [
+      "underscore",
+      "GateType",
+      "MockGames"
     ]
   }
 }
