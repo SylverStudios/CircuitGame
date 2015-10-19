@@ -7,7 +7,7 @@ var CircuitGame = function(containerId, width, height) {
 
   this.init = function() {
     controller.init();
-    visualizer.init();
+    visualizer.init('canvas', 1000, 600);
 
     var board = controller.createBoard();
     visualizer.update(board);
