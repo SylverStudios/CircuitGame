@@ -1,8 +1,9 @@
 // NODE
 // context.arc(x,y,r,sAngle,eAngle,counterclockwise);
-var placeNode = function(context, node) {
+var placeNode = function(canvas, node) {
+  var context = canvas.getContext('2d');
   context.beginPath();
-  context.arc(node.x, node.y, 10, 0, 2*Math.PI);
+  context.arc(node.x+canvas.offsetLeft, node.y+canvas.offsetTop, 10, 0, 2*Math.PI);
   // context.fillStyle='#4F2F4F'
   context.fillStyle = 'green';
   context.fill();
@@ -10,35 +11,38 @@ var placeNode = function(context, node) {
 }
 
 // WIRE
-var connectNodes = function(context, node1, node2) {
+var connectNodes = function(canvas, node1, node2) {
   if (node1.y != node2.y) {
-    multiLineWire(context, node1, node2);
+    multiLineWire(canvas, node1, node2);
   } else {
-    singleLineWire(context, node1, node2);
+    singleLineWire(canvas, node1, node2);
   }
 }
 
-var singleLineWire = function(context, node1, node2) {
+var singleLineWire = function(canvas, node1, node2) {
+  var context = canvas.getContext('2d');
   context.beginPath();
-  context.moveTo(node1.x, node1.y);
-  context.lineTo(node2.x, node2.y);
+  context.moveTo(node1.x+canvas.offsetLeft, node1.y+canvas.offsetTop);
+  context.lineTo(node2.x+canvas.offsetLeft, node2.y+canvas.offsetTop);
   context.stroke();
   context.closePath();
 }
 
-var multiLineWire = function(context, node1, node2) {
+var multiLineWire = function(canvas, node1, node2) {
+  var context = canvas.getContext('2d');
   var distanceBetween = Math.abs(node1.x - node2.x);
 
   context.beginPath();
-  context.moveTo(node1.x, node1.y);
-  context.lineTo(node1.x + (distanceBetween/2), node1.y);
-  context.lineTo(node1.x + (distanceBetween/2), node2.y);
-  context.lineTo(node2.x, node2.y);
+  context.moveTo(node1.x + canvas.offsetLeft, node1.y + canvas.offsetTop);
+  context.lineTo(node1.x + (distanceBetween/2) + canvas.offsetLeft, node1.y + canvas.offsetTop);
+  context.lineTo(node1.x + (distanceBetween/2) + canvas.offsetLeft, node2.y + canvas.offsetTop);
+  context.lineTo(node2.x + canvas.offsetLeft, node2.y + canvas.offsetTop);
   context.stroke();
   context.closePath();
 }
 
-var displayTest = function(context) {
+var displayTest = function(canvas) {
+
   var node1 = {
     x : 150,
     y : 50
@@ -54,27 +58,27 @@ var displayTest = function(context) {
     y : 150
   }
 
-  placeNode(context, node1);
-  placeNode(context, node2);
-  placeNode(context, node3);
+  placeNode(canvas, node1);
+  placeNode(canvas, node2);
+  placeNode(canvas, node3);
 
-  connectNodes(context, node1, node2);
-  connectNodes(context, node3, node2);
+  connectNodes(canvas, node1, node2);
+  connectNodes(canvas, node3, node2);
 }
 
 module.exports = {
-  placeNodeOnCanvas : function(context, node) {
-    placeNode(context, node);
+  placeNodeOnCanvas : function(canvas, node) {
+    placeNode(canvas, node);
   },
 
-  connectNodesOnCanvas : function(context, node1, node2) {
-    console.log("Connecting nodes: \n");
-    console.log("outNode ID: "+node1.id+" X: "+node1.x+" Y: "+node1.y);
-            console.log("currentNode ID: "+node2.id+" X: "+node2.x+" Y: "+node2.y);
-    connectNodes(context, node1, node2);
+  connectNodesOnCanvas : function(canvas, node1, node2) {
+    // console.log("Connecting nodes: \n");
+    // console.log("outNode ID: "+node1.id+" X: "+node1.x+" Y: "+node1.y);
+    // console.log("currentNode ID: "+node2.id+" X: "+node2.x+" Y: "+node2.y);
+    connectNodes(canvas, node1, node2);
   },
 
-  canvasTest : function(context) {
-    displayTest(context);
+  canvasTest : function(canvas) {
+    displayTest(canvas);
   }
 }
