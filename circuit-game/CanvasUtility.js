@@ -1,3 +1,4 @@
+var _ = require('underscore');
 // NODE
 // context.arc(x,y,r,sAngle,eAngle,counterclockwise);
 var placeNode = function(canvas, node) {
@@ -76,6 +77,19 @@ module.exports = {
     // console.log("outNode ID: "+node1.id+" X: "+node1.x+" Y: "+node1.y);
     // console.log("currentNode ID: "+node2.id+" X: "+node2.x+" Y: "+node2.y);
     connectNodes(canvas, node1, node2);
+  },
+
+  drawMapOfNodes : function(canvas, nodeMap) {
+    _.each(nodeMap, function(node) {
+        var firstNode = node;
+        placeNode(canvas, node);
+
+        _.each(firstNode.outs, function(outID) {
+          var secondNode = nodeMap[outID];
+          connectNodes(canvas, firstNode, secondNode);
+        });
+
+      }); 
   },
 
   canvasTest : function(canvas) {
