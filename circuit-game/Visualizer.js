@@ -36,14 +36,7 @@ var Visualizer = function(containerId, width, height) {
       {id: 6, ins: [3, 5], outs: [8]},
       {id: 7, ins: [5], outs: []},
       {id: 8, ins: [6], outs: []}
-    ];
-
-      var layerArray = turnNodeArrayIntoLayerArray(board);
-
-      // determineNodePositions(layerArray);
-      // printLayerArrayNodeLocations(layerArray);
-
-      // drawLayerArray(layerArray, nodes);
+      ];
 
       var map = mapByID(nodes);
 
@@ -59,78 +52,11 @@ var Visualizer = function(containerId, width, height) {
       console.log(printer.getMapLocations(map));
       console.log(map[5]);
 
-      drawFromMap(map);
-
+      pen.drawMapOfNodes(canvas, map);
     }
 
 
     //___________________UTILITY FXNS____________________________
-
-    // LOCATION SERVICE
-    var turnNodeArrayIntoLayerArray = function(board) {
-      layerArray = [];
-      var loopKiller = 0;
-
-      var solved = board.getInputNodes();
-      var unsolved = board.getGates().concat(board.getOutputNodes());
-
-      layerArray.push(solved);
-
-      while (unsolved.length) {
-        loopKiller++;
-        var currentLayer = getNextLayer(solved, unsolved);
-        unsolved = removeNodesFromArrayById(unsolved, currentLayer);
-        solved = solved.concat(currentLayer);
-
-        layerArray.push(currentLayer);
-        console.log("num iterations: "+loopKiller);
-
-        if (loopKiller > 50) {
-          console.log("unsolvedArray.length = "+unsolved.length);
-          break;
-          return;
-          unsolved.length = false;
-        }
-
-      }
-
-      printer.printLayerArrayIDs(layerArray);
-      return layerArray;
-    }
-
-    var determineNodePositions = function(layerArray) {
-      var xIntervals = canvas.width/(layerArray.length+1);
-      
-      for (var i=0; i<layerArray.length; i++) {
-        var currentArray = layerArray[i];
-        
-        for( var j=0; j<currentArray.length; j++) {
-          currentArray[j].x = xIntervals*(i+1);
-          currentArray[j].y = canvas.height/(currentArray.length+1)*(j+1);
-        }
-
-      }
-    }
-
-    var drawLayerArray = function(layerArray) {
-      layerArray.forEach(function(nodeArray) {
-        var currentArray = nodeArray;
-
-        currentArray.forEach(function(node) {
-          pen.placeNodeOnCanvas(canvas, node);
-          var currentNode = node;
-
-          currentNode.outs.forEach(function(nodeID) {
-            // Problem area
-            var outNode = findNodeInLayerArray(layerArray, nodeID);
-            if (outNode) {
-              pen.connectNodesOnCanvas(canvas, currentNode, outNode);
-            }
-          });
-        });
-      });
-    }
-
     var solveInputLayer = function(nodeMap, canvas) {
       // O(nodes in Map)
       var inputNodes = [];
@@ -188,7 +114,6 @@ var Visualizer = function(containerId, width, height) {
     }
 
     var solveNode = function(node, nodeMap) {
-      // O(nodes in Map)
       var currentNode = node;
       var text = "SolveNode: "+currentNode.id;
 
@@ -199,18 +124,10 @@ var Visualizer = function(containerId, width, height) {
       }
 
       // Find inputs to this node.
-      var nodeInputs = [];
       _.each(currentNode.ins, function(nodeID) {
         var inputNode = solveNode(nodeMap[nodeID], nodeMap);
-        nodeInputs.push(inputNode);
-      });
 
-      // New Y should be between the Y of the two inputs
-      var y = 0;
-      console.log(nodeInputs);
-
-      _.each(nodeInputs, function(inputNode) {
-        y += inputNode.y;
+        currentNode.y = (currentNode.y) ? currentNode.y + (inputNode.y/2) : inputNode.y/2;
 
         currentNode.layer = (currentNode.layer) ? currentNode.layer : 0;
         currentNode.layer = (inputNode.layer > currentNode.layer) ? inputNode.layer : currentNode.layer;
@@ -218,7 +135,6 @@ var Visualizer = function(containerId, width, height) {
         currentNode.metaScore  = (currentNode.metaScore) ? (currentNode.metaScore + inputNode.metaScore) : inputNode.metaScore;
       });
 
-      currentNode.y = y/2;
       currentNode.metaScore++;
       currentNode.layer++;
 
@@ -236,88 +152,6 @@ var Visualizer = function(containerId, width, height) {
         }
       });
       return nodeInputs;
-    }
-
-    var drawFromMap = function(nodeMap) {
-      _.each(nodeMap, function(node) {
-        var firstNode = node;
-        pen.placeNodeOnCanvas(canvas, node);
-
-        _.each(node.outs, function(outID) {
-          var secondNode = nodeMap[outID];
-          pen.connectNodesOnCanvas(canvas, firstNode, secondNode);
-        });
-
-      }); 
-    }
-
-    // for all nodes
-    // layer = node.ins.largestLayer + 1;
-    // x = layer * xInterval;
-    // y = 
-
-    var getNextLayer = function(solvedNodes, unsolvedNodes) {
-      // Return an array of the next layer.
-      return _.filter(unsolvedNodes, function(element) {
-        return inputNodesInArray(solvedNodes, element);
-      });
-
-    }
-
-    //________________________________________________________________________OBJECT UTILITIES
-    var removeNodesFromArrayById = function(arrayToModify, elementsToRemove) {
-      elementsToRemove.forEach(function(element) {
-        var index = indexOfObjectById(arrayToModify, element);
-        arrayToModify.splice(index, 1);
-      });
-
-      return arrayToModify;
-    }
-
-    var inputNodesInArray = function(arrayOfNodes, node) {
-      for (var i = 0; i < node.ins.length; i++) {
-        _id = node.ins[i];
-        if (!idInNodeArray(arrayOfNodes, _id)) return false;
-      }
-
-      return true;
-    }
-
-    var idInNodeArray = function(arrayOfNodes, id) {
-      if (!_.find(arrayOfNodes, function(node) {
-        return node.id == id;
-      })) { 
-        return false;
-      };
-      
-      return true;
-    }
-
-    var indexOfObjectById = function(array, nodeID) {
-      for (var i=0; i<array.length; i++) {
-        if(array[i].id == nodeID) {
-          return i;
-        }
-      }
-    }
-
-    var findObjectById = function(array, nodeID) {
-      for (var i=0; i<array.length; i++) {
-        if(array[i].id == nodeID) {
-          return array[i];
-        }
-      }
-    }
-
-    var findNodeInLayerArray = function(layerArray, nodeID) {
-      console.log("findNodeInLayerArray with nodeID: "+nodeID);
-      for(var i=0; i<layerArray.length;i++) {
-        var foundNode = findObjectById(layerArray[i], nodeID);
-        if (foundNode) {
-          console.log("Search for node with ID: "+foundNode.id+" and found one with X: "+foundNode.x);
-          return foundNode;
-        }
-      }
     }
 
     var mapByID = function(nodeArray) {
@@ -384,6 +218,7 @@ var Visualizer = function(containerId, width, height) {
     };
 
     testFunction();
+
   }
 }
 
