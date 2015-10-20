@@ -4,7 +4,7 @@
 
 var SceneGenerator = {
   generate: function() {
-    throw 'not implemented yet';
+    throw 'not implemented yet'; // TODO implement this
   }
 };
 
