@@ -1,3 +1,7 @@
+/**
+ * Generates game scenes.
+ */
+
 var MockGames = require('./__tests__/MockGames');
 
 var SceneGenerator = {

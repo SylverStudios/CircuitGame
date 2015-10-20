@@ -1,3 +1,7 @@
+/**
+ * GateType Enum.
+ */
+
 module.exports = Object.freeze({
   AND: 'GATETYPE_AND',
   OR: 'GATETYPE_OR',

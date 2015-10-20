@@ -1,3 +1,7 @@
+/**
+ * Performs boolean logic on an array of booleans according to input GateType.
+ */
+
 var _ = require('underscore');
 var GateType = require('./GateType');
 

@@ -1,3 +1,7 @@
+/**
+ * Performs operations pertaining to game state.
+ */
+
 var _ = require('underscore');
 var GateLogic = require('./GateLogic');
 

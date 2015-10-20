@@ -1,3 +1,7 @@
+/**
+ * Entry point for circuit game app.
+ */
+
 var Visualizer = require('./Visualizer');
 var StateManager = require('./StateManager');
 var SceneGenerator = require('./SceneGenerator');
