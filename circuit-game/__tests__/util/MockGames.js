@@ -203,6 +203,55 @@ var MockGames = {
       },
       playerHasWon: true
     }
+  },
+  2: {
+    scene: PremadeScenes[2],
+    expectedInitialState: {
+      gateTypes: {3: GateType.OR, 4: GateType.NAND},
+      objectives: {
+        0: {
+          nodes: {0: false, 1: false, 2: false, 3: false, 4: true, 5: false, 6: true},
+          outputNodeSatisfaction: {5: false, 6: false},
+          satisfied: false
+        },
+        1: {
+          nodes: {0: false, 1: false, 2: true, 3: false, 4: true, 5: false, 6: true},
+          outputNodeSatisfaction: {5: false, 6: true},
+          satisfied: false
+        },
+        2: {
+          nodes: {0: false, 1: true, 2: false, 3: true, 4: true, 5: true, 6: true},
+          outputNodeSatisfaction: {5: false, 6: false},
+          satisfied: false
+        },
+        3: {
+          nodes: {0: false, 1: true, 2: true, 3: true, 4: false, 5: true, 6: false},
+          outputNodeSatisfaction: {5: false, 6: true},
+          satisfied: false
+        },
+        4: {
+          nodes: {0: true, 1: false, 2: false, 3: true, 4: true, 5: true, 6: true},
+          outputNodeSatisfaction: {5: false, 6: false},
+          satisfied: false
+        },
+        5: {
+          nodes: {0: true, 1: false, 2: true, 3: true, 4: false, 5: true, 6: false},
+          outputNodeSatisfaction: {5: false, 6: true},
+          satisfied: false
+        },
+        6: {
+          nodes: {0: true, 1: true, 2: false, 3: true, 4: true, 5: true, 6: true},
+          outputNodeSatisfaction: {5: false, 6: false},
+          satisfied: false
+        },
+        7: {
+          nodes: {0: true, 1: true, 2: true, 3: true, 4: false, 5: true, 6: false},
+          outputNodeSatisfaction: {5: false, 6: true},
+          satisfied: false
+        }
+      },
+      playerHasWon: false
+    }
   }
 };
 
