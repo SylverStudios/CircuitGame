@@ -36,6 +36,10 @@ describe('CircuitGame playthrough', function() {
     var game = new CircuitGame();
     game.startNewGame(1);
     expect(visualizerMock.setScene).toBeCalledWith(mockGame.scene, mockGame.expectedInitialState);
-    // TODO change gate types a few times and expect the states, then win
+    game.changeGateType(3, GateType.XOR);
+    expect(visualizerMock.update).toBeCalledWith(mockGame.expectedStateWithGatesXORandXNOR);
+    visualizerMock.update.mockClear();
+    game.changeGateType(4, GateType.NAND);
+    expect(visualizerMock.update).toBeCalledWith(mockGame.expectedFinalState);
   });
 });
