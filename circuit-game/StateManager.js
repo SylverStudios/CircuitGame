@@ -57,10 +57,11 @@ function computeObjectiveState(scene, gateTypes, objective) {
 }
 
 var StateManager = {
-  genInitialGateTypes: function() {
-    throw 'not implemented yet';
-  },
   computeState: function(scene, gateTypes) {
+    if (gateTypes === undefined) {
+      gateTypes = scene.initialGateTypes;
+    }
+
     var objectiveStates = {};
 
     _.each(scene.objectives, function(objective, objectiveId) {

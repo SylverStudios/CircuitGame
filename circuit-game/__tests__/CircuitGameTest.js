@@ -23,17 +23,11 @@ describe('CircuitGame playthrough', function() {
     StateManager = require('../StateManager');
     SceneGenerator = require('../SceneGenerator');
   });
-  it('can handle a simple game', function() {
+  it('can handle first premade game', function() {
     var mockGame = MockGames[0];
-    StateManager.genInitialGateTypes = jest.genMockFunction().mockImplementation(function() {
-      return mockGame.initialGateTypes;
-    });
-    SceneGenerator.generate = jest.genMockFunction().mockImplementation(function() {
-      return mockGame.scene;
-    });
-
     var game = new CircuitGame();
     expect(VisualizerMock).toBeCalled();
+    game.startNewGame(0);
     expect(visualizerSetSceneFunc).toBeCalledWith(mockGame.scene, mockGame.expectedInitialState);
     game.changeGateType(2, GateType.AND);
     expect(visualizerUpdateFunc).toBeCalledWith(mockGame.expectedStateWithAndGate);

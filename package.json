@@ -36,6 +36,7 @@
     ],
     "unmockedModulePathPatterns": [
       "underscore",
+      "PremadeScenes",
       "GateType",
       "MockGames"
     ]
