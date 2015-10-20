@@ -37,6 +37,57 @@ var PremadeScenes = {
     inputNodeIds: [0, 1],
     gateNodeIds: [2],
     outputNodeIds: [3]
+  },
+  1: {
+    nodes: {
+      0: {id: 0, ins: [], outs: [3]},
+      1: {id: 1, ins: [], outs: [3]},
+      2: {id: 2, ins: [], outs: [4]},
+      3: {id: 3, ins: [0, 1], outs: [4]},
+      4: {id: 4, ins: [2, 3], outs: [5]},
+      5: {id: 5, ins: [4], outs: []}
+    },
+    objectives: {
+      0: {
+        inputNodeStates: {0: false, 1: false, 2: false},
+        outputNodeStates: {5: true}
+      },
+      1: {
+        inputNodeStates: {0: false, 1: false, 2: true},
+        outputNodeStates: {5: true}
+      },
+      2: {
+        inputNodeStates: {0: false, 1: true, 2: false},
+        outputNodeStates: {5: true}
+      },
+      3: {
+        inputNodeStates: {0: false, 1: true, 2: true},
+        outputNodeStates: {5: false}
+      },
+      4: {
+        inputNodeStates: {0: true, 1: false, 2: false},
+        outputNodeStates: {5: true}
+      },
+      5: {
+        inputNodeStates: {0: true, 1: false, 2: true},
+        outputNodeStates: {5: false}
+      },
+      6: {
+        inputNodeStates: {0: true, 1: true, 2: false},
+        outputNodeStates: {5: true}
+      },
+      7: {
+        inputNodeStates: {0: true, 1: true, 2: true},
+        outputNodeStates: {5: true}
+      }
+    },
+    initialGateTypes: {
+      3: GateType.NOR, // XOR
+      4: GateType.XNOR // NAND
+    },
+    inputNodeIds: [0, 1, 2],
+    gateNodeIds: [3, 4],
+    outputNodeIds: [5]
   }
 };
 
