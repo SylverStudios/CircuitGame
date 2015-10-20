@@ -48,5 +48,10 @@ describe('CircuitGame playthrough', function() {
     var game = new CircuitGame();
     game.startNewGame(2);
     expect(visualizerMock.setScene).toBeCalledWith(mockGame.scene, mockGame.expectedInitialState);
+    game.changeGateType(3, GateType.NOR);
+    expect(visualizerMock.update).toBeCalledWith(mockGame.expectedStateWithGatesNORandNAND);
+    visualizerMock.update.mockClear();
+    game.changeGateType(4, GateType.AND);
+    expect(visualizerMock.update).toBeCalledWith(mockGame.expectedFinalState);
   });
 });
