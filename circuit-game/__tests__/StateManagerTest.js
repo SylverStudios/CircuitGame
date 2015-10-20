@@ -7,7 +7,7 @@ describe('StateManager::computeState with first mock game', function() {
 
   beforeEach(function() {
     StateManager = require('../StateManager');
-    MockGames = require('./MockGames');
+    MockGames = require('./util/MockGames');
     GateType = require('../GateType');
   });
 

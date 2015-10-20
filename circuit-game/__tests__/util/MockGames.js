@@ -1,5 +1,9 @@
-var PremadeScenes = require('../PremadeScenes');
-var GateType = require('../GateType');
+/**
+ * Provides expectations for PremadeScenes.
+ */
+
+var PremadeScenes = require('../../PremadeScenes');
+var GateType = require('../../GateType');
 
 var MockGames = {
   0: {

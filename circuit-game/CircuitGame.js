@@ -26,6 +26,9 @@ var CircuitGame = function(containerId, width, height) {
   };
 
   this.changeGateType = function(gateIndex, gateType) {
+    if (!self.scene) {
+      throw 'cannot change gate type, no current scene';
+    }
     if (!_.contains(self.scene.gateNodeIds, gateIndex)) {
       throw 'invalid gateIndex: ' + gateIndex;
     }

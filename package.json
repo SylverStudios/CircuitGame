@@ -38,7 +38,8 @@
       "underscore",
       "PremadeScenes",
       "GateType",
-      "MockGames"
+      "MockGames",
+      "VisualizerMocker"
     ]
   }
 }

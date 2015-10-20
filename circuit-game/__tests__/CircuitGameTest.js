@@ -1,35 +1,73 @@
-jest.autoMockOff();
+jest.dontMock('../CircuitGame');
 
-jest.mock('../SceneGenerator');
+var VisualizerMocker = require('./util/VisualizerMocker');
 
-describe('CircuitGame playthrough', function() {
+describe('CircuitGame type checking', function() {
 
-  var CircuitGame, GateType, MockGames, VisualizerMock, visualizerSetSceneFunc,
-    visualizerUpdateFunc, StateManager, SceneGenerator;
+  var CircuitGame, _, game, SceneGenerator;
 
   beforeEach(function() {
-    visualizerSetSceneFunc = jest.genMockFunction();
-    visualizerUpdateFunc = jest.genMockFunction();
-    VisualizerMock = jest.genMockFunction().mockImplementation(function() {
-      this.init = jest.genMockFunction();
-      this.setScene = visualizerSetSceneFunc;
-      this.update = visualizerUpdateFunc;
-    });
-    jest.setMock('../Visualizer', VisualizerMock);
-
     CircuitGame = require('../CircuitGame');
-    GateType = require('../GateType');
-    MockGames = require('./MockGames');
-    StateManager = require('../StateManager');
+    _ = require('underscore');
+    game = new CircuitGame();
     SceneGenerator = require('../SceneGenerator');
   });
-  it('can handle first premade game', function() {
-    var mockGame = MockGames[0];
+
+  it('throws on bad premadeGameIndex in startNewGame', function() {
+    expect(_.partial(game.startNewGame, -2)).toThrow('invalid premadeGameIndex: -2');
+  });
+
+  it('throws if there is no current scene in changeGateType', function() {
+    expect(_.partial(game.changeGateType, 0, 0)).toThrow('cannot change gate type, no current scene');
+  });
+
+  it('throws on bad gateIndex in changeGateType', function() {
+    game.scene = {};
+    expect(_.partial(game.changeGateType, -2)).toThrow('invalid gateIndex: -2');
+  });
+
+  it('throws on bade gateType in changeGateType', function() {
+    game.scene = {gateNodeIds: [0]};
+    expect(_.partial(game.changeGateType, 0, -2)).toThrow('invalid gateType: -2');
+  });
+});
+
+describe('CircuitGame game orchestration', function() {
+
+  var CircuitGame, _, PremadeScenes, visualizerMock, SceneGenerator, StateManager, GateType;
+
+  beforeEach(function() {
+    visualizerMock = VisualizerMocker.doMock();
+    CircuitGame = require('../CircuitGame');
+    _ = require('underscore');
+    PremadeScenes = require('../PremadeScenes');
+    SceneGenerator = require('../SceneGenerator');
+    StateManager = require('../StateManager');
+    GateType = require('../GateType');
+  });
+
+  it('constructs Visualizer with correct parameters on instantiation', function() {
+    var game = new CircuitGame('container-id', 123, 321);
+    expect(visualizerMock.constructor).toBeCalledWith('container-id', 123, 321, _.size(PremadeScenes), game.startNewGame, game.changeGateType);
+  });
+
+  it('calls Visualizer::setScene on startNewGame with scene and state', function() {
     var game = new CircuitGame();
-    expect(VisualizerMock).toBeCalled();
-    game.startNewGame(0);
-    expect(visualizerSetSceneFunc).toBeCalledWith(mockGame.scene, mockGame.expectedInitialState);
-    game.changeGateType(2, GateType.AND);
-    expect(visualizerUpdateFunc).toBeCalledWith(mockGame.expectedStateWithAndGate);
+    var mockScene = {"i am": "a scene"};
+    var mockState = {"i am": "a state"};
+    SceneGenerator.generate.mockReturnValue(mockScene);
+    StateManager.computeState.mockReturnValue(mockState)
+    game.startNewGame();
+    expect(visualizerMock.setScene).toBeCalledWith(mockScene, mockState);
+  });
+
+  it('calls Visualizer::update on changeGateType with state', function() {
+    var game = new CircuitGame();
+    game.scene = {gateNodeIds: [0]};
+    game.state = {gateTypes: {0: GateType.OR}};
+    var mockState = {"i am": "a state"};
+    StateManager.computeState.mockReturnValue(mockState);
+    game.changeGateType(0, GateType.AND);
+    expect(visualizerMock.update).toBeCalledWith(mockState);
   });
 });
