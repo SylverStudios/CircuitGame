@@ -1,8 +1,9 @@
 var _ = require('underscore');
 var pen = require('./CanvasUtility');
 
-var Visualizer = function(containerId, width, height) {
+var Visualizer = function(containerId, width, height, sizeOfPremadeScenes, startGameCallback, changeGateTypeCallback) {
   var canvas;
+  Visualizer(containerId, width, height, _.size(PremadeScenes), this.startNewGame, this.changeGateType);
 
   this.init = function(id, width, height) {
     var container = document.getElementById(containerId);
