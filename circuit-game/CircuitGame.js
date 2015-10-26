@@ -13,7 +13,6 @@ var GateType = require('./GateType');
 var CircuitGame = function(containerId, width, height) {
   var self = this;
 
-<<<<<<< HEAD
   this.startNewGame = function(premadeGameIndex) {
     if (premadeGameIndex === undefined) {
       self.scene = SceneGenerator.generate();
@@ -25,11 +24,6 @@ var CircuitGame = function(containerId, width, height) {
     self.state = StateManager.computeState(self.scene);
     self.visualizer.setScene(self.scene, self.state);
   };
-=======
-  this.init = function() {
-    controller.init();
-    visualizer.init('canvas', 1000, 600);
->>>>>>> Updated draw methods and simplified loops...I think...
 
   this.changeGateType = function(gateIndex, gateType) {
     if (!self.scene) {
@@ -48,6 +42,7 @@ var CircuitGame = function(containerId, width, height) {
   };
 
   this.visualizer = new Visualizer(containerId, width, height, _.size(PremadeScenes), this.startNewGame, this.changeGateType);
+  this.startNewGame(1);
 };
 
 module.exports = CircuitGame;
