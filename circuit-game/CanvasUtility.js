@@ -73,6 +73,12 @@ module.exports = {
   },
 
   connectNodesOnCanvas : function(canvas, node1, node2) {
+<<<<<<< HEAD
+=======
+    // console.log("Connecting nodes: \n");
+    // console.log("outNode ID: "+node1.id+" X: "+node1.x+" Y: "+node1.y);
+    // console.log("currentNode ID: "+node2.id+" X: "+node2.x+" Y: "+node2.y);
+>>>>>>> e4e31239ce0914eb9302a3199d65855a7c27212d
     connectNodes(canvas, node1, node2);
   },
 
