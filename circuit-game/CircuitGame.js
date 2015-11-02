@@ -13,7 +13,6 @@ var GateType = require('./GateType');
 var CircuitGame = function(containerId, width, height) {
   var self = this;
 
-<<<<<<< HEAD
   this.startNewGame = function(premadeGameIndex) {
     if (premadeGameIndex === undefined) {
       self.scene = SceneGenerator.generate();
@@ -25,11 +24,6 @@ var CircuitGame = function(containerId, width, height) {
     self.state = StateManager.computeState(self.scene);
     self.visualizer.setScene(self.scene, self.state);
   };
-=======
-  this.init = function() {
-    controller.init();
-    visualizer.init('canvas', 1000, 600);
->>>>>>> e4e31239ce0914eb9302a3199d65855a7c27212d
 
   this.changeGateType = function(gateIndex, gateType) {
     if (!self.scene) {
