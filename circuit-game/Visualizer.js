@@ -5,9 +5,6 @@ var GateType = require('./GateType');
 var Visualizer = function(containerId, width, height, sizeOfPremadeScenes, startGameCallback, changeGateTypeCallback) {
   var canvas, nodeMap, inputNodes, pen, initialScene, ImprovedGateType, currentState, currentObjective;
 
-  // Somehow determine this based on height and width;
-  var nodeRadius = 10;
-
   var sizeScenes = sizeOfPremadeScenes;
   var startFunction = startGameCallback;
   var changeFunction = changeGateTypeCallback;
@@ -58,7 +55,7 @@ var Visualizer = function(containerId, width, height, sizeOfPremadeScenes, start
 
     setInitialGateTypes();
 
-    console.log(getPropValuesFromArrayObjects(nodeMap, ["id", "x", "y"]));
+    //console.log(getPropValuesFromArrayObjects(nodeMap, ["id", "x", "y"]));
 
     determineCurrentObjective();
 
@@ -67,13 +64,10 @@ var Visualizer = function(containerId, width, height, sizeOfPremadeScenes, start
     pen.drawMapOfNodes(nodeMap);
   }
 
-
-
   // Compares the new state to the current one and updates
   this.update = function(state) {
     console.log(state);
 
-    // Update the state of any node that changed
     _.each(state.gateTypes, function(type, key) {
       if (nodeMap[key].gateType != type) {
         console.log("The state of node "+key+" has changed from "+nodeMap[key].gateType+" to "+type);
@@ -121,9 +115,11 @@ var Visualizer = function(containerId, width, height, sizeOfPremadeScenes, start
 
     var yInterval = canvas.height/(outputNodes.length+1);
 
+    // Set y to be the same as the input
     for (var i = 0; i < outputNodes.length; i++) {
       outputNodes[i].x = xPosition;
-      outputNodes[i].y = yInterval*(i+1);
+      var myInputID = outputNodes[i].ins[0];
+      outputNodes[i].y = nodeMap[myInputID].y
       nodeMap[outputNodes[i].id] = outputNodes[i];
     }
   }
@@ -166,7 +162,7 @@ var Visualizer = function(containerId, width, height, sizeOfPremadeScenes, start
   var setInitialGateTypes = function() {
     _.each(initialScene.initialGateTypes, function(gate, key) {
       nodeMap[key].gateType = gate;
-      console.log("Set gate @ "+key+"with type "+gate);
+      console.log("Set gate @ "+key+" with type "+gate);
     });
   }
 
@@ -318,6 +314,7 @@ var Visualizer = function(containerId, width, height, sizeOfPremadeScenes, start
         currentObjective = objective;
       }
     });
+    console.log("Current Objective:");
     console.log(currentObjective);
   }
 
