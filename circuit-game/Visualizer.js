@@ -3,7 +3,7 @@ var canvasUtil = require('./CanvasUtility');
 var GateType = require('./GateType');
 
 var Visualizer = function(containerId, width, height, sizeOfPremadeScenes, startGameCallback, changeGateTypeCallback) {
-  var canvas, nodeMap, inputNodes, pen;
+  var canvas, nodeMap, inputNodes, pen, initialScene, ImprovedGateType, currentState, currentObjective;
 
   // Somehow determine this based on height and width;
   var nodeRadius = 10;
@@ -16,9 +16,34 @@ var Visualizer = function(containerId, width, height, sizeOfPremadeScenes, start
 
   pen = new canvasUtil(canvas);
 
+// This is a fuckin mess...solve it another way
+// TODO
+  ImprovedGateType = {
+    AND: {id: 1,
+          name: 'GATETYPE_AND'},
+    OR: {id: 2,
+          name: 'GATETYPE_OR'},
+    NAND: {id: 3,
+          name: 'GATETYPE_NAND'},
+    NOR: {id : 4,
+          name: 'GATETYPE_NOR'},
+    XOR: {id: 5,
+          name: 'GATETYPE_XOR'},
+    XNOR: {id: 6,
+          name: 'GATETYPE_XNOR'}
+  }
+  ImprovedGateType['AND'].next = ImprovedGateType['OR'];
+  ImprovedGateType['OR'].next = ImprovedGateType['NAND'];
+  ImprovedGateType['NAND'].next = ImprovedGateType['NOR'];
+  ImprovedGateType['NOR'].next = ImprovedGateType['XOR'];
+  ImprovedGateType['XOR'].next = ImprovedGateType['XNOR'];
+  ImprovedGateType['XNOR'].next = ImprovedGateType['AND'];
+
 
   // Create the canvas on the page and initial map computations
   this.setScene = function(scene, state) {
+    currentState = state;
+    initialScene = scene;
     nodeMap = scene.nodes;
 
     setValuesOnInputNodes();
@@ -31,7 +56,13 @@ var Visualizer = function(containerId, width, height, sizeOfPremadeScenes, start
 
     setValuesOnOutputNodes();
 
+    setInitialGateTypes();
+
     console.log(getPropValuesFromArrayObjects(nodeMap, ["id", "x", "y"]));
+
+    determineCurrentObjective();
+
+    setOutputStatesForCurrentObjective();
 
     pen.drawMapOfNodes(nodeMap);
   }
@@ -40,10 +71,25 @@ var Visualizer = function(containerId, width, height, sizeOfPremadeScenes, start
 
   // Compares the new state to the current one and updates
   this.update = function(state) {
+    console.log(state);
 
-    //TODO
-    // update map values
-    // redraw
+    // Update the state of any node that changed
+    _.each(state.gateTypes, function(type, key) {
+      if (nodeMap[key].gateType != type) {
+        console.log("The state of node "+key+" has changed from "+nodeMap[key].gateType+" to "+type);
+        nodeMap[key].gateType = type;
+      }
+    });
+
+    pen.clear();
+
+    determineCurrentObjective();
+    setOutputStatesForCurrentObjective();
+    pen.drawMapOfNodes(nodeMap);
+
+    if (state.playerHasWon) {
+      alert("YOU JUST FUCKING WON!!!");
+    }
 
   }
 
@@ -57,6 +103,7 @@ var Visualizer = function(containerId, width, height, sizeOfPremadeScenes, start
 
     for(var i = 0; i < inputNodes.length; i++) {
       var node = inputNodes[i];
+      node.state = true;
       node.layer = 1;
       node.metaScore = 1;
       node.y = yInterval*(i+1);
@@ -93,8 +140,7 @@ var Visualizer = function(containerId, width, height, sizeOfPremadeScenes, start
 
   var solveNode = function(currentNode) {
     // base cases - input or already solved
-    if (node.layer != undefined) {
-      console.log(text+" - node already solved with layer: "+currentNode.layer);
+    if (currentNode.layer != undefined) {
       return currentNode;
     }
 
@@ -115,6 +161,13 @@ var Visualizer = function(containerId, width, height, sizeOfPremadeScenes, start
 
     nodeMap[currentNode.id] = currentNode;
     return currentNode;
+  }
+
+  var setInitialGateTypes = function() {
+    _.each(initialScene.initialGateTypes, function(gate, key) {
+      nodeMap[key].gateType = gate;
+      console.log("Set gate @ "+key+"with type "+gate);
+    });
   }
 
 //_____________________________________________________________________MapUtility
@@ -210,16 +263,29 @@ var Visualizer = function(containerId, width, height, sizeOfPremadeScenes, start
     setCanvasOnClick();
   };
 
-  var setCanvasOnClick = function() {
+  function setCanvasOnClick() {
+    // There needs to be a recusive solve map for determining the output nodes state
 
     canvas.addEventListener('click', function(event) {
       coords = canvas.relMouseCoords(event);
       console.log("Clicked at x: "+coords.x+" and y: "+coords.y);
 
       var clickedNode = mapUtility.getNodeByCoord(nodeMap, coords.x, coords.y);
-      if (clickedNode) {
-        console.log("Clicked Node : "+clickedNode.id);
-        pen.drawNode(clickedNode, 'red');
+      
+      if (clickedNode && clickedNode.gateType) {
+        var improvedGate = _.findWhere(ImprovedGateType, {name: clickedNode.gateType});
+        changeGateTypeCallback(clickedNode.id, improvedGate.next.name);
+
+      } else if (clickedNode && initialScene.inputNodeIds.indexOf(clickedNode.id) != -1) {
+        console.log("Input Node.");
+        nodeMap[clickedNode.id].state = !clickedNode.state;
+        
+        determineCurrentObjective();
+
+        setOutputStatesForCurrentObjective();
+
+        pen.clear();
+        pen.drawMapOfNodes(nodeMap);
       }
 
     }, false);
@@ -244,6 +310,34 @@ var Visualizer = function(containerId, width, height, sizeOfPremadeScenes, start
 
     return props.join();
   };
+
+  var determineCurrentObjective = function() {
+
+    _.each(currentState.objectives, function(objective, key) {
+      if (objectiveMatchesCurrentScene(objective)) {
+        currentObjective = objective;
+      }
+    });
+    console.log(currentObjective);
+  }
+
+  var objectiveMatchesCurrentScene = function(objective) {
+    var nonMatches = 0;
+    initialScene.inputNodeIds.forEach(function(id) {
+
+      if (nodeMap[id].state != objective.nodes[id]) {
+        nonMatches++;
+      }
+    });
+    return (nonMatches == 0);
+  }
+
+  var setOutputStatesForCurrentObjective = function() {
+    var outputNodes = mapUtility.getOutputNodes(nodeMap);
+    _.each(outputNodes, function(value) {
+      nodeMap[value.id].state = currentObjective.nodes[value.id];
+    });
+  }
 
 }
 
