@@ -154,42 +154,57 @@ var CanvasUtility = function(canvas) {
     context.closePath();
   }
 
+  function drawID(node) {
+    context.font = 'italic 20px sans-serif';
+    var tempFill = context.fillStyle;
+    context.fillStyle = "black";
+    context.fillText(node.id, node.x , node.y+30, 50);
+    context.fillStyle = tempFill;
+  }
+
   var drawGate = function(node) {
     switch (node.gateType) {
       case GateType.AND:
         drawAnd(node);
         drawExitWire(node);
+        drawID(node);
         break;
 
       case GateType.OR:
         drawOr(node);
         drawExitWire(node);
+        drawID(node);
         break;
 
       case GateType.NAND:
         drawAnd(node);
         drawNot(node);
+        drawID(node);
         break;
 
       case GateType.NOR:
         drawOr(node);
         drawNot(node);
+        drawID(node);
         break;
 
       case GateType.XOR:
         drawOr(node);
         drawExclusive(node);
         drawExitWire(node);
+        drawID(node);
         break;
 
       case GateType.XNOR:
         drawOr(node);
         drawExclusive(node);
         drawNot(node);
+        drawID(node);
         break;
 
       case "" || undefined:
         drawStateNode(node);
+        drawID(node);
         break;
 
       default:

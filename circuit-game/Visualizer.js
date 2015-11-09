@@ -39,6 +39,7 @@ var Visualizer = function(containerId, width, height, sizeOfPremadeScenes, start
 
   // Create the canvas on the page and initial map computations
   this.setScene = function(scene, state) {
+    createObjectiveChart(state);
     currentState = state;
     initialScene = scene;
     nodeMap = scene.nodes;
@@ -67,6 +68,7 @@ var Visualizer = function(containerId, width, height, sizeOfPremadeScenes, start
   // Compares the new state to the current one and updates
   this.update = function(state) {
     console.log(state);
+    currentState = state;
 
     _.each(state.gateTypes, function(type, key) {
       if (nodeMap[key].gateType != type) {
@@ -312,10 +314,9 @@ var Visualizer = function(containerId, width, height, sizeOfPremadeScenes, start
     _.each(currentState.objectives, function(objective, key) {
       if (objectiveMatchesCurrentScene(objective)) {
         currentObjective = objective;
+        console.log(currentObjective);
       }
     });
-    console.log("Current Objective:");
-    console.log(currentObjective);
   }
 
   var objectiveMatchesCurrentScene = function(objective) {
@@ -331,9 +332,37 @@ var Visualizer = function(containerId, width, height, sizeOfPremadeScenes, start
 
   var setOutputStatesForCurrentObjective = function() {
     var outputNodes = mapUtility.getOutputNodes(nodeMap);
+
     _.each(outputNodes, function(value) {
       nodeMap[value.id].state = currentObjective.nodes[value.id];
     });
+  }
+
+  var createObjectiveChart = function(state) {
+    //doc.write...get doc somehow
+
+    console.log("create chart.");
+
+    var chart = "<table style='width:100%'>";
+    chart += "<tr>";
+    for(var i=0; i<Object.keys(state.objectives[0].nodes).length; i++) {
+      chart += "<td>node "+i+"</td>";
+    }
+    chart += "</tr>";
+
+    _.each(state.objectives, function(objective, key) {
+      chart += "<tr>";
+      _.each(objective.nodes, function(nodeState, key) {
+        chart += "<td>"+nodeState+"</td>";
+      });
+
+      chart += "</tr>";
+    });
+
+    chart += "</table>";
+
+    document.write(chart);
+
   }
 
 }
