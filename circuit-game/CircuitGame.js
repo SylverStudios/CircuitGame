@@ -40,7 +40,7 @@ var CircuitGame = function(containerId, width, height) {
     gateTypes[gateIndex] = gateType;
     self.state = StateManager.computeState(self.scene, gateTypes);
     console.log('end of changeGateType');
-    console.log(self.state);
+    console.log(self.state)
     self.visualizer.update(self.state);
   };
 

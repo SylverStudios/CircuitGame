@@ -39,10 +39,11 @@ var Visualizer = function(containerId, width, height, sizeOfPremadeScenes, start
 
   // Create the canvas on the page and initial map computations
   this.setScene = function(scene, state) {
-    createObjectiveChart(state);
     currentState = state;
     initialScene = scene;
     nodeMap = scene.nodes;
+
+    createObjectiveChart(state);
 
     setValuesOnInputNodes();
 
@@ -321,12 +322,12 @@ var Visualizer = function(containerId, width, height, sizeOfPremadeScenes, start
 
   var objectiveMatchesCurrentScene = function(objective) {
     var nonMatches = 0;
-    initialScene.inputNodeIds.forEach(function(id) {
 
+    _.each(initialScene.inputNodeIds, function(id, key) {
       if (nodeMap[id].state != objective.nodes[id]) {
         nonMatches++;
       }
-    });
+    })
     return (nonMatches == 0);
   }
 
@@ -339,22 +340,17 @@ var Visualizer = function(containerId, width, height, sizeOfPremadeScenes, start
   }
 
   var createObjectiveChart = function(state) {
-    //doc.write...get doc somehow
 
     console.log("create chart.");
 
     var chart = "<table style='width:100%'>";
-    chart += "<tr>";
-    for(var i=0; i<Object.keys(state.objectives[0].nodes).length; i++) {
-      chart += "<td>node "+i+"</td>";
-    }
-    chart += "</tr>";
+    chart += createHeader();
 
     _.each(state.objectives, function(objective, key) {
       chart += "<tr>";
-      _.each(objective.nodes, function(nodeState, key) {
-        chart += "<td>"+nodeState+"</td>";
-      });
+
+      chart += createTableData(objective, initialScene.inputNodeIds);
+      chart += createTableData(objective, initialScene.outputNodeIds);
 
       chart += "</tr>";
     });
@@ -363,6 +359,43 @@ var Visualizer = function(containerId, width, height, sizeOfPremadeScenes, start
 
     document.write(chart);
 
+  }
+
+  var createTableData = function(objective, arrayOfIds) {
+    var elements = "";
+
+    _.each(arrayOfIds, function(id, key) {
+        var gateColor = (objective.nodes[id]) ? "#33CC33" : "#CC0000";
+        var textColor = (objective.nodes[id]) ? "black" : "white";
+          
+        elements += "<td bgcolor=";
+        elements += gateColor;
+        elements += "><font color=";
+        elements += textColor;
+        elements += ">";
+        elements += objective.nodes[id];
+        elements += "</font></td>";
+      });
+
+    return elements;
+  }
+
+  var createHeader = function() {
+    var header = "<tr id='header'>";
+    _.each(initialScene.inputNodeIds, function(id, key) {
+      header += "<td>Input ";
+      header += id;
+      header += "</td>"
+    });
+
+    _.each(initialScene.outputNodeIds, function(id, key) {
+      header += "<td>Output ";
+      header += id;
+      header += "</td>"
+    });
+
+    header += "</tr>";
+    return header;
   }
 
 }
