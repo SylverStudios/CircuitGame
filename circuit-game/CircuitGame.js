@@ -45,7 +45,7 @@ var CircuitGame = function(containerId, width, height) {
   };
 
   this.visualizer = new Visualizer(containerId, width, height, _.size(PremadeScenes), this.startNewGame, this.changeGateType);
-  this.startNewGame(2);
+  this.startNewGame(1);
   // this.visualizer.test();
 };
 

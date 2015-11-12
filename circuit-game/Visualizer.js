@@ -63,7 +63,7 @@ var Visualizer = function(containerId, width, height, sizeOfPremadeScenes, start
 
     setOutputStatesForCurrentObjective();
 
-    pen.drawMapOfNodes(nodeMap);
+    pen.drawMapOfNodes(nodeMap, currentObjective);
   }
 
   // Compares the new state to the current one and updates
@@ -82,7 +82,7 @@ var Visualizer = function(containerId, width, height, sizeOfPremadeScenes, start
 
     determineCurrentObjective();
     setOutputStatesForCurrentObjective();
-    pen.drawMapOfNodes(nodeMap);
+    pen.drawMapOfNodes(nodeMap, currentObjective);
 
     if (state.playerHasWon) {
       alert("YOU JUST FUCKING WON!!!");
@@ -284,7 +284,7 @@ var Visualizer = function(containerId, width, height, sizeOfPremadeScenes, start
         setOutputStatesForCurrentObjective();
 
         pen.clear();
-        pen.drawMapOfNodes(nodeMap);
+        pen.drawMapOfNodes(nodeMap, currentObjective);
       }
 
     }, false);
