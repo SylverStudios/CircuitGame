@@ -26,6 +26,7 @@ var CircuitGame = function(containerId, width, height) {
   };
 
   this.changeGateType = function(gateIndex, gateType) {
+    console.log('changeGateType({gateIndex: ' + gateIndex + ', gateType: ' + gateType + '})');
     if (!self.scene) {
       throw 'cannot change gate type, no current scene';
     }
@@ -38,10 +39,14 @@ var CircuitGame = function(containerId, width, height) {
     var gateTypes = self.state.gateTypes;
     gateTypes[gateIndex] = gateType;
     self.state = StateManager.computeState(self.scene, gateTypes);
+    console.log('end of changeGateType');
+    console.log(self.state)
     self.visualizer.update(self.state);
   };
 
   this.visualizer = new Visualizer(containerId, width, height, _.size(PremadeScenes), this.startNewGame, this.changeGateType);
+  this.startNewGame(1);
+  // this.visualizer.test();
 };
 
 module.exports = CircuitGame;
