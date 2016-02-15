@@ -44,8 +44,6 @@ var Visualizer = function(containerId, width, height, sizeOfPremadeScenes, start
     nodeMap = scene.nodes;
     pen.clear();
 
-    //createObjectiveChart(state);
-
     setValuesOnInputNodes();
 
     _.each(mapUtility.getOutputNodes(nodeMap), function(node) {
@@ -82,11 +80,6 @@ var Visualizer = function(containerId, width, height, sizeOfPremadeScenes, start
     determineCurrentObjective();
     setOutputStatesForCurrentObjective();
     pen.drawMapOfNodes(nodeMap, currentObjective);
-
-    if (state.playerHasWon) {
-      alert("YOU JUST FUCKING WON!!!");
-    }
-
   }
 
 // Private helper functions

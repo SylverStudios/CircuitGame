@@ -15,6 +15,11 @@ html, body {
   background: black;
   height: 100%;
   width: 100%;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none; 
 
   .title-section {
     width: 100%;
@@ -38,6 +43,11 @@ html, body {
       height: $gameHeight;
       border: 1px solid blue;
       margin: 0 auto;
+    }
+
+    #control-panel {
+      -o-user-select: none;
+      user-select: none;
     }
   }
 
