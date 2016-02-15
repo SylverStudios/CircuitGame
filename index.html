@@ -4,18 +4,79 @@
   <meta charset="utf-8">
   <title>CircuitGame</title>
   <link rel="stylesheet" href="build/main.css" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 </head>
 <body>
+
   <div class="circuit-game-webpage">
+
     <div class="title-section">
       <div class="title">
-        Circuit Game
+        Circuit Simulator
       </div>
     </div>
-    <div id="game-container" />
+
+    <div id="main-left" class="col-md-3 main">
+      <div id="control-panel">
+        <div id="legend" class="panel panel-success">
+          <div class="panel-heading">Legend</div>
+          <div class="panel-body">Try another map.</div>
+          <input id="start-button" type="button" value="Next Map" />
+          <table class="table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Icon</th>
+                <th>Gate</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">1</th>
+                <td>icon</td>
+                <td>AND</td>
+              </tr>
+              <tr>
+                <th scope="row">2</th>
+                <td>icon</td>
+                <td>OR</td>
+              </tr>
+              <tr>
+                <th scope="row">3</th>
+                <td>icon</td>
+                <td>NAND</td>
+              </tr>
+              <tr>
+                <th scope="row">4</th>
+                <td>icon</td>
+                <td>NOR</td>
+              </tr>
+              <tr>
+                <th scope="row">5</th>
+                <td>icon</td>
+                <td>XOR</td>
+              </tr>
+              <tr>
+                <th scope="row">6</th>
+                <td>icon</td>
+                <td>XNOR</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 main">
+      <div id="game-container"/>
+    </div>
+
+    <div id="main-right" class="col-md-3 main">
+    </div>
   </div>
 
-  <script src="build/main.js"></script>
+  <script type="text/javascript" src="build/main.js" ></script>
+
 
 </body>
 </html>

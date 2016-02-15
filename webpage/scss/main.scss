@@ -12,9 +12,9 @@ html, body {
 }
 
 .circuit-game-webpage {
-  width: 100%;
-  height: 100%;
   background: black;
+  height: 100%;
+  width: 100%;
 
   .title-section {
     width: 100%;
@@ -27,12 +27,19 @@ html, body {
       font-size: 32px;
       padding-top: 16px;
     }
+
+    .main {
+      height: 100%;
+      width: 100%;
+    }
+
+    #game-container {
+      width: $gameWidth;
+      height: $gameHeight;
+      border: 1px solid blue;
+      margin: 0 auto;
+    }
   }
 
-  #game-container {
-    width: $gameWidth;
-    height: $gameHeight;
-    border: 1px solid blue;
-    margin: 0 auto;
-  }
+
 }

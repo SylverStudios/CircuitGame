@@ -49,7 +49,6 @@ var CanvasUtility = function(canvas) {
     context.moveTo(node1.x+18, node1.y);
     context.lineTo(node2.x-10, node2.y);
     context.stroke();
-    console.log(node1);
 
     context.beginPath();
     context.moveTo(node1.x+18, node1.y);
@@ -79,7 +78,6 @@ var CanvasUtility = function(canvas) {
     context.lineTo(target.x-10 , target.y+yTargetOffset);
     context.strokeStyle = (objective.nodes[start.id]) ? "#33CC33" : "#CC0000";
     context.lineWidth = 6;
-    console.log(context);
     context.stroke();
 
     context.beginPath();
@@ -92,15 +90,9 @@ var CanvasUtility = function(canvas) {
     context.stroke();
   };
 
-  // I want all of the gates to be the same size, which unfortunately means they will
-  // each have to be resized depending on whether they have the NOT symbol or the Exclusive
-  // Symbol.
-  // They should all take space from:
-  // X:    [node.x-10, node.x+18]
-  // Y:    [node.y-10, node.y+10]
-  // Not Symbols will have width 8
-  // Exclusive will take up width 4
-
+// Nodes all have the same base dimensions
+// Front Assesories: Not Symbol -or- Exit Wire
+// Rear Assesories: Exclusive Symbol
   function drawStateNode(node) {
     var gateColor = (node.state) ? "#33CC33" : "#CC0000";
 
@@ -197,58 +189,42 @@ var CanvasUtility = function(canvas) {
     context.stroke();
   }
 
-  function drawID(node) {
-    context.beginPath();
-    context.font = 'italic 20px sans-serif';
-    var tempFill = context.fillStyle;
-    context.fillStyle = "black";
-    context.fillText(node.id, node.x , node.y+30, 50);
-    context.fillStyle = tempFill;
-  }
-
   var drawGate = function(node) {
     switch (node.gateType) {
       case GateType.AND:
         drawAnd(node);
         drawExitWire(node);
-        drawID(node);
         break;
 
       case GateType.OR:
         drawOr(node);
         drawExitWire(node);
-        drawID(node);
         break;
 
       case GateType.NAND:
         drawAnd(node);
         drawNot(node);
-        drawID(node);
         break;
 
       case GateType.NOR:
         drawOr(node);
         drawNot(node);
-        drawID(node);
         break;
 
       case GateType.XOR:
         drawOr(node);
         drawExclusive(node);
         drawExitWire(node);
-        drawID(node);
         break;
 
       case GateType.XNOR:
         drawOr(node);
         drawExclusive(node);
         drawNot(node);
-        drawID(node);
         break;
 
       case "" || undefined:
         drawStateNode(node);
-        drawID(node);
         break;
 
       default:
