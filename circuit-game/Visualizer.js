@@ -42,8 +42,7 @@ var Visualizer = function(containerId, width, height, sizeOfPremadeScenes, start
     currentState = state;
     initialScene = scene;
     nodeMap = scene.nodes;
-
-    createObjectiveChart(state);
+    pen.clear();
 
     setValuesOnInputNodes();
 
@@ -56,8 +55,6 @@ var Visualizer = function(containerId, width, height, sizeOfPremadeScenes, start
     setValuesOnOutputNodes();
 
     setInitialGateTypes();
-
-    //console.log(getPropValuesFromArrayObjects(nodeMap, ["id", "x", "y"]));
 
     determineCurrentObjective();
 
@@ -83,11 +80,6 @@ var Visualizer = function(containerId, width, height, sizeOfPremadeScenes, start
     determineCurrentObjective();
     setOutputStatesForCurrentObjective();
     pen.drawMapOfNodes(nodeMap, currentObjective);
-
-    if (state.playerHasWon) {
-      alert("YOU JUST FUCKING WON!!!");
-    }
-
   }
 
 // Private helper functions
@@ -253,14 +245,27 @@ var Visualizer = function(containerId, width, height, sizeOfPremadeScenes, start
     container.appendChild(canvas);
 
     HTMLCanvasElement.prototype.relMouseCoords = function(event) {
-      var canvasX = event.pageX - canvas.offsetLeft;
-      var canvasY = event.pageY - canvas.offsetTop;
+      var posish = findPos(canvas);
+      var canvasX = event.pageX - posish.x;
+      var canvasY = event.pageY - posish.y;
 
       return {x:canvasX, y:canvasY}
     };
 
     setCanvasOnClick();
   };
+
+  function findPos(obj) {
+    var curleft = 0, curtop = 0;
+    if (obj.offsetParent) {
+        do {
+            curleft += obj.offsetLeft;
+            curtop += obj.offsetTop;
+        } while (obj = obj.offsetParent);
+        return { x: curleft, y: curtop };
+    }
+    return undefined;
+  }
 
   function setCanvasOnClick() {
     // There needs to be a recusive solve map for determining the output nodes state
@@ -271,12 +276,13 @@ var Visualizer = function(containerId, width, height, sizeOfPremadeScenes, start
 
       var clickedNode = mapUtility.getNodeByCoord(nodeMap, coords.x, coords.y);
       
+      // It's a gate
       if (clickedNode && clickedNode.gateType) {
         var improvedGate = _.findWhere(ImprovedGateType, {name: clickedNode.gateType});
         changeGateTypeCallback(clickedNode.id, improvedGate.next.name);
 
+      // It's an input node.
       } else if (clickedNode && initialScene.inputNodeIds.indexOf(clickedNode.id) != -1) {
-        console.log("Input Node.");
         nodeMap[clickedNode.id].state = !clickedNode.state;
         
         determineCurrentObjective();
@@ -290,26 +296,6 @@ var Visualizer = function(containerId, width, height, sizeOfPremadeScenes, start
     }, false);
   }
 
-  var getPropValuesFromArrayObjects = function(array, propNames) {
-    var arrayContents = [];
-    _.each(array, function(value, key) {
-      var text = "ID: "+key+"-> ";
-      text += getPropsOffObject(value, propNames);
-      arrayContents.push(text);
-    });
-    return "[\n"+arrayContents.join("\n")+"\n]";
-  };
-
-  var getPropsOffObject = function(object, propNames) {
-    var props = [];
-    
-    _.each(propNames, function(value) {
-      props.push(value + " : " + object[value]);
-    });
-
-    return props.join();
-  };
-
   var determineCurrentObjective = function() {
 
     _.each(currentState.objectives, function(objective, key) {
@@ -320,6 +306,7 @@ var Visualizer = function(containerId, width, height, sizeOfPremadeScenes, start
     });
   }
 
+  // This can def just return false instead of incramenting the counter
   var objectiveMatchesCurrentScene = function(objective) {
     var nonMatches = 0;
 
@@ -337,65 +324,6 @@ var Visualizer = function(containerId, width, height, sizeOfPremadeScenes, start
     _.each(outputNodes, function(value) {
       nodeMap[value.id].state = currentObjective.nodes[value.id];
     });
-  }
-
-  var createObjectiveChart = function(state) {
-
-    console.log("create chart.");
-
-    var chart = "<table style='width:100%'>";
-    chart += createHeader();
-
-    _.each(state.objectives, function(objective, key) {
-      chart += "<tr>";
-
-      chart += createTableData(objective, initialScene.inputNodeIds);
-      chart += createTableData(objective, initialScene.outputNodeIds);
-
-      chart += "</tr>";
-    });
-
-    chart += "</table>";
-
-    document.write(chart);
-
-  }
-
-  var createTableData = function(objective, arrayOfIds) {
-    var elements = "";
-
-    _.each(arrayOfIds, function(id, key) {
-        var gateColor = (objective.nodes[id]) ? "#33CC33" : "#CC0000";
-        var textColor = (objective.nodes[id]) ? "black" : "white";
-          
-        elements += "<td bgcolor=";
-        elements += gateColor;
-        elements += "><font color=";
-        elements += textColor;
-        elements += ">";
-        elements += objective.nodes[id];
-        elements += "</font></td>";
-      });
-
-    return elements;
-  }
-
-  var createHeader = function() {
-    var header = "<tr id='header'>";
-    _.each(initialScene.inputNodeIds, function(id, key) {
-      header += "<td>Input ";
-      header += id;
-      header += "</td>"
-    });
-
-    _.each(initialScene.outputNodeIds, function(id, key) {
-      header += "<td>Output ";
-      header += id;
-      header += "</td>"
-    });
-
-    header += "</tr>";
-    return header;
   }
 
 }
